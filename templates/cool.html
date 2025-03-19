@@ -1,0 +1,37 @@
+{% extends 'base.html' %} {% block content %} {% if user.is_authenticated %}
+<div class="card text-center">
+  <div class="card-header">Greeting</div>
+  <div class="card-body">
+    <h5 class="card-title">
+      Welcome
+      <a href="{% url 'home' %}" style="text-decoration: none"
+        >{{ user.username }}</a
+      >
+    </h5>
+    <p class="card-text">
+      This is a <b>user login and registration system</b> built with Django5.
+      Open source, free and easily maintained Authentication and Authorization
+      template with 3rd party authentication using the most popular social login
+      library django-allauth
+    </p>
+
+  </div>
+  <div class="card-footer text-muted">{{ user.date_joined }}</div>
+</div>
+
+{% else %}
+<div class="card text-center">
+  <div class="card-header">Greeting</div>
+  <div class="card-body">
+    <h5 class="card-title">Welcome guest</h5>
+    <p class="card-text">
+      This is a <b>user login and registration system</b> built with Django5.
+      Open source, free and easily maintained Authentication and Authorization
+      template with 3rd party authentication using the most popular social login
+      library django-allauth
+    </p>
+  </div>
+  <div class="card-footer text-muted">{{ user.date_joined }}</div>
+</div>
+
+{% endif %} {% endblock %}
