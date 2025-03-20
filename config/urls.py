@@ -13,6 +13,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
     path('schema/', SpectacularAPIView.as_view(), name='schema'),
+    path("ckeditor5/", include('django_ckeditor_5.urls')),
     path('', views.home, name='home' ),
     path('yu/', views.soms, name='login' ),
 ]

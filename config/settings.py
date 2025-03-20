@@ -30,12 +30,18 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+
+    'django_ckeditor_5',
     'rest_framework',
     'django_filters',
     'corsheaders',
 
     'allauth',
     'allauth.account',
+
+    'rest_framework.authtoken',
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
 
     'users',
 
@@ -46,6 +52,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'drf_spectacular',
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -182,3 +190,9 @@ REST_FRAMEWORK = {
 }
 # endregion -------------------------------------------------------------------------
 AUTH_USER_MODEL = 'users.User'
+
+
+# Настройки Allauth
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+

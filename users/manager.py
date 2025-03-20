@@ -28,6 +28,8 @@ class UserManager(BaseUserManager):
             email=email,
             **extra_fields
         )
+        if user.is_superuser:
+            user.role = user.Role.ADMIN
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -69,6 +71,7 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_active', True)
+
 
         return self._create_user(
             username,
