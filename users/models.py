@@ -5,6 +5,8 @@ from django.dispatch import receiver
 from phonenumber_field.modelfields import PhoneNumberField
 from django.utils.translation import gettext_lazy as _
 from django_ckeditor_5.fields import CKEditor5Field
+from config import settings
+
 
 class User(AbstractUser):
     class Role(models.TextChoices):
@@ -37,9 +39,10 @@ class User(AbstractUser):
 
     objects = UserManager()
 
+
+
     def __str__(self):
         return self.email
-
 
 
 class Profile(models.Model):
@@ -54,7 +57,16 @@ class Profile(models.Model):
         null=True
     )
     bio = CKEditor5Field()
+    skills = models.JSONField(default=list, blank=True, verbose_name="Навыки")
     date_of_birth = models.DateField(blank=True, null=True)
+    followers = models.ManyToManyField(settings.AUTH_USER_MODEL,
+                                       related_name="user_followers",
+                                       blank=True,
+                                       symmetrical=False)
+    following = models.ManyToManyField(settings.AUTH_USER_MODEL,
+                                       related_name="user_following",
+                                       blank=True,
+                                       symmetrical=False)
     location = models.CharField(max_length=68, blank=True, null=True)
     linkedin = models.URLField(blank=True, null=True)
     twitter = models.URLField(blank=True, null=True)
@@ -64,6 +76,22 @@ class Profile(models.Model):
     article_count = models.PositiveIntegerField(default=0)
     comment_count = models.PositiveIntegerField(default=0)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def number_of_followers(self):
+        if self.followers.count():
+            return self.followers.count()
+        else:
+            return 0
+
+    def number_of_following(self):
+        if self.following.count():
+            return self.following.count()
+        else:
+            return 0
+
+    class Meta:
+        verbose_name = _("Profile")
+
 
 @receiver(post_save, sender=User)
 def post_save_user(sender, instance: User, created, **kwargs) -> None:

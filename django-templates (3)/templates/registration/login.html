@@ -10,10 +10,10 @@
             <h1>Welcome back</h1>
             <p>Log in to your account to continue</p>
         </div>
-
+        
         <form id="login-form" class="auth-form" method="post" action="{% url 'login' %}">
             {% csrf_token %}
-
+            
             {% if form.non_field_errors %}
             <div class="server-error">
                 {% for error in form.non_field_errors %}
@@ -21,7 +21,7 @@
                 {% endfor %}
             </div>
             {% endif %}
-
+            
             <div class="form-group">
                 <div class="floating-label">
                     <input type="text" id="username" name="username" required placeholder=" ">
@@ -35,7 +35,7 @@
                 </div>
                 {% endif %}
             </div>
-
+            
             <div class="form-group">
                 <div class="floating-label">
                     <input type="password" id="password" name="password" required placeholder=" ">
@@ -53,21 +53,21 @@
                         <input type="checkbox" id="remember" name="remember">
                         <label for="remember">Remember me</label>
                     </div>
-                    <a href="" class="forgot-password">Forgot password?</a>
+                    <a href="{% url 'password_reset' %}" class="forgot-password">Forgot password?</a>
                 </div>
             </div>
-
+            
             {% if next %}
                 <input type="hidden" name="next" value="{{ next }}">
             {% endif %}
-
+            
             <button type="submit" class="btn btn-primary btn-block">Log in</button>
         </form>
-
+        
         <div class="auth-divider">
             <span>Or continue with</span>
         </div>
-
+        
         <div class="social-login">
             <button class="btn btn-social">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
@@ -82,9 +82,9 @@
                 <span>GitHub</span>
             </button>
         </div>
-
+        
         <div class="auth-footer">
-            <p>Don't have an account? <a href="">Sign up</a></p>
+            <p>Don't have an account? <a href="{% url 'register' %}">Sign up</a></p>
         </div>
     </div>
 </div>
@@ -96,19 +96,19 @@
         const loginForm = document.getElementById('login-form');
         const usernameInput = document.getElementById('username');
         const passwordInput = document.getElementById('password');
-
+        
         if (loginForm) {
             loginForm.addEventListener('submit', function(event) {
                 let isValid = true;
-
+                
                 // Reset error messages
                 document.querySelectorAll('.error-message').forEach(el => {
                     el.textContent = '';
                 });
-
+                
                 // Validate username/email
                 if (!usernameInput.value.trim()) {
-                    const errorEl = usernameInput.closest('.form-group').querySelector('.error-message') ||
+                    const errorEl = usernameInput.closest('.form-group').querySelector('.error-message') || 
                                    document.createElement('div');
                     errorEl.className = 'error-message';
                     errorEl.textContent = 'Username or email is required';
@@ -117,10 +117,10 @@
                     }
                     isValid = false;
                 }
-
+                
                 // Validate password
                 if (!passwordInput.value) {
-                    const errorEl = passwordInput.closest('.form-group').querySelector('.error-message') ||
+                    const errorEl = passwordInput.closest('.form-group').querySelector('.error-message') || 
                                    document.createElement('div');
                     errorEl.className = 'error-message';
                     errorEl.textContent = 'Password is required';
@@ -129,7 +129,7 @@
                     }
                     isValid = false;
                 }
-
+                
                 if (!isValid) {
                     event.preventDefault();
                 }
@@ -138,3 +138,4 @@
     });
 </script>
 {% endblock %}
+

@@ -1,4 +1,6 @@
 import os
+from datetime import timedelta
+
 import environ
 
 # region ---------------------- BASE CONFIGURATION -----------------------------------------
@@ -16,10 +18,37 @@ ALLOWED_HOSTS = env.str('ALLOWED_HOSTS', default='').split(' ')
 # endregion ---------------------------------------------------------------------------------
 
 # region ---------------------- CORS HEADERS -----------------------------------------------
-CORS_ORIGIN_ALLOW_ALL = True  # Allow all origins
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_HEADERS = ['*']  # Allow all headers
-CSRF_COOKIE_SECURE = False  # Disable CSRF cookie for development
+# CORS_ORIGIN_ALLOW_ALL = True  # Allow all origins
+# CORS_ALLOW_CREDENTIALS = True
+# CORS_ALLOW_HEADERS = ['*']  # Allow all headers
+# CSRF_COOKIE_SECURE = False  # Disable CSRF cookie for development
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    # Add other origins as needed
+]
+
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
+
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+]
+
+# Instead of CORS_ORIGIN_ALLOW_ALL = True, which can sometimes cause issues
 # endregion ---------------------------------------------------------------------------------
 
 INSTALLED_APPS = [
@@ -35,7 +64,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'corsheaders',
-
+    'rest_framework_simplejwt',
+    
+    
     'allauth',
     'allauth.account',
 
@@ -44,6 +75,9 @@ INSTALLED_APPS = [
     'dj_rest_auth.registration',
 
     'users',
+    'blog',
+    'comments',
+    'analytics',
 
     # Optional -- requires install using `django-allauth[socialaccount]`.
     'allauth.socialaccount',
@@ -56,6 +90,8 @@ INSTALLED_APPS = [
 SITE_ID = 1
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -63,8 +99,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
-    'corsheaders.middleware.CorsMiddleware',
     "allauth.account.middleware.AccountMiddleware",
 ]
 
@@ -178,7 +212,9 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication',
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     'DEFAULT_PARSER_CLASSES': (
         'rest_framework.parsers.JSONParser',
@@ -186,9 +222,35 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.MultiPartParser',
         'rest_framework.parsers.FileUploadParser',
     ),
+    'USE_JWT': True,
+    'JWT_AUTH_COOKIE': 'users-auth',
+    'JWT_AUTH_REFRESH_COOKIE': 'users-refresh-token',
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
+REST_USE_JWT = True
+
+
 # endregion -------------------------------------------------------------------------
+
+# region ---------------------- SIMPLE JWT & DJOSER -----------------------------------------
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": True,  # Обновление refresh-токена при каждом запросе
+    "BLACKLIST_AFTER_ROTATION": True,  # Аннулирование старого refresh-токена
+    "AUTH_HEADER_TYPES": ("Bearer",),
+}
+
+DJOSER = {
+    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
+    'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': '#/activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': False,
+    'SERIALIZERS': {},
+}
+# endregion -------------------------------------------------------------------------
+
+
 AUTH_USER_MODEL = 'users.User'
 
 
@@ -196,3 +258,22 @@ AUTH_USER_MODEL = 'users.User'
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
 
+# region ---------------------- SMTP ------------------------------------------------
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# Настройка почтового сервера по SMTP-протоколу
+EMAIL_HOST = env.str('EMAIL_HOST')
+EMAIL_PORT = env.int('EMAIL_PORT')
+EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS')
+EMAIL_HOST_USER = env.str('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD')
+SERVER_EMAIL = EMAIL_HOST_USER
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+# endregion ---------------------------------------------------------------------------------
+# Phone number field
+PHONENUMBER_DEFAULT_REGION = "UZ"
+
+# Token length for OTP
+TOKEN_LENGTH = 6
+
+# Token expiry
+TOKEN_EXPIRE_MINUTES = 3
