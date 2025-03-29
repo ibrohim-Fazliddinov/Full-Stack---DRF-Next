@@ -22,10 +22,20 @@ ALLOWED_HOSTS = env.str('ALLOWED_HOSTS', default='').split(' ')
 # CORS_ALLOW_CREDENTIALS = True
 # CORS_ALLOW_HEADERS = ['*']  # Allow all headers
 # CSRF_COOKIE_SECURE = False  # Disable CSRF cookie for development
+
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:3000",  # Укажи конкретный адрес фронтенда
+#     "http://127.0.0.1:3000"
+# ]
+# CORS_ALLOW_CREDENTIALS = True  # Разрешаем передачу credentials (cookies, headers)
+# CORS_ALLOW_HEADERS = ["*"]  # Разрешаем все заголовки
+# CORS_ALLOW_METHODS = ["*"]  # Разрешаем все методы (GET, POST и т.д.)
+#
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    # Add other origins as needed
+    "http://localhost:3000",  # Your Next.js app
 ]
+
+CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_METHODS = [
     "DELETE",
@@ -47,8 +57,6 @@ CORS_ALLOW_HEADERS = [
     "x-csrftoken",
     "x-requested-with",
 ]
-
-# Instead of CORS_ORIGIN_ALLOW_ALL = True, which can sometimes cause issues
 # endregion ---------------------------------------------------------------------------------
 
 INSTALLED_APPS = [
@@ -65,6 +73,7 @@ INSTALLED_APPS = [
     'django_filters',
     'corsheaders',
     'rest_framework_simplejwt',
+    'django_extensions',
     
     
     'allauth',
@@ -91,7 +100,7 @@ SITE_ID = 1
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
-
+    # 'django.middleware.common.BrokenLinkEmailsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

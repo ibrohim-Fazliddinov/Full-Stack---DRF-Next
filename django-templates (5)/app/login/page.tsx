@@ -1,12 +1,13 @@
 "use client"
 
 import type React from "react"
+
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import Link from "next/link"
-import { useState } from "react"
 import { useAuth } from "@/contexts/auth-context"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useRouter } from "next/navigation"
@@ -17,7 +18,7 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const { login, loginWithGoogle, loginWithGithub } = useAuth()
+  const { login } = useAuth()
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -37,7 +38,6 @@ export default function LoginPage() {
 
   const handleGoogleLogin = async () => {
     // This is a simplified example. In a real app, you would use a proper OAuth flow
-    // For example, using next-auth or a similar library
     window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google/`
   }
 
@@ -147,7 +147,7 @@ export default function LoginPage() {
 
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
-            Don&apos;t have an account?{" "}
+            Don't have an account?{" "}
             <Link href="/register" className="text-blue-600 hover:underline">
               Sign up
             </Link>

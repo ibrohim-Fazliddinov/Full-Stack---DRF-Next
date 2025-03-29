@@ -1,9 +1,8 @@
 from django.db.models import Count
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
-
 from blog.models import Post
 from blog.serializer import PostSerializer
 
@@ -66,15 +65,18 @@ class PostViewSet(ModelViewSet):
     def get_queryset(self):
         return (
             Post.objects.
-            select_related('author')
-            .prefetch_related('comments').all()
+            select_related('author').all()
             .annotate(num_views=Count('viewers'))
         )
 
+    # def get_permissions(self):
+    #     if self.action in ['list', 'retrieve']:  # ← Разрешаем всем только просмотр
+    #         return [AllowAny()]
+    #     return [IsAuthenticated()]  # ← А остальное только авторизованным
 
     def retrieve(self, request, *args, **kwargs):
         post = self.get_object()
-        if self.request.user.is_authenticated and not post.views.filter(pk=request.user.pk).exists():
+        if self.request.user.is_authenticated and not post.viewers.filter(pk=request.user.pk).exists():
             post.viewers.add(request.user)
             post.save()
 
@@ -101,7 +103,7 @@ class PostViewSet(ModelViewSet):
 class UserFeedView(generics.ListAPIView):
     """
        Представление для получения пользовательской ленты постов.
-       """
+    """
     serializer_class = PostSerializer
 
     def get_queryset(self):

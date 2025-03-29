@@ -1,13 +1,12 @@
-from django.urls import path
+from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from blog.views import PostViewSet, UserFeedView
 
 router = DefaultRouter()
-router.register(r'post', PostViewSet, basename='post-manage')
+router.register(r'posts', PostViewSet, basename='posts')
 
 
 urlpatterns = [
-    path('post/user/feed/', UserFeedView.as_view(), name="feed")
+    path('posts/user/feed/', UserFeedView.as_view(), name="feed"),
+    path('', include(router.urls))
 ]
-
-urlpatterns += router.urls

@@ -11,7 +11,7 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import render
 from drf_spectacular.utils import extend_schema_view, extend_schema
 from rest_framework import status
-from rest_framework.generics import RetrieveUpdateDestroyAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.renderers import TemplateHTMLRenderer
 from rest_framework.response import Response
@@ -244,35 +244,69 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
     pass
 
 
-@extend_schema(
-    summary="Получить, обновить или удалить текущего пользователя",
-    description="""
-    Эндпоинт для работы с профилем текущего пользователя:
-    - GET: Получить информацию о текущем пользователе.
-    - PUT: Полностью обновить информацию о пользователе.
-    - PATCH: Частично обновить информацию о пользователе.
-    - DELETE: Удалить профиль пользователя.
-    """,
-    tags=["Users"],
+@extend_schema_view(
+    retrieve=extend_schema(
+        summary="Получить информацию о текущем пользователе",
+        description="Возвращает информацию о пользователе, который отправил запрос.",
+        responses={200: UserSerializer},
+        tags=["Users"],
+    ),
+    update=extend_schema(
+        summary="Полностью обновить профиль пользователя",
+        description="Полностью заменяет данные пользователя на переданные.",
+        request=UserSerializer,
+        responses={200: UserSerializer},
+        tags=["Users"],
+    ),
+    partial_update=extend_schema(
+        summary="Частично обновить профиль пользователя",
+        description="Обновляет только указанные поля пользователя.",
+        request=UserSerializer,
+        responses={200: UserSerializer},
+        tags=["Users"],
+    ),
+    destroy=extend_schema(
+        summary="Удалить профиль пользователя",
+        description="Удаляет профиль текущего пользователя. После удаления вход невозможен.",
+        responses={204: None},
+        tags=["Users"],
+    ),
 )
 class UserAPIView(RetrieveUpdateDestroyAPIView):
     """
     Представление для работы с профилем текущего пользователя.
 
     Методы:
-        - retrieve (GET): Получить данные текущего пользователя.
-        - update (PUT): Полностью обновить данные пользователя.
-        - partial_update (PATCH): Частично обновить данные пользователя.
-        - destroy (DELETE): Удалить профиль пользователя.
+    - GET: Получить данные текущего пользователя.
+    - PUT: Полностью обновить данные пользователя.
+    - PATCH: Частично обновить данные пользователя.
+    - DELETE: Удалить профиль пользователя.
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = (IsAuthenticated,)
 
     def get_object(self):
         """
-        Возвращает текущего пользователя на основе запроса.
+        Возвращает текущего пользователя.
         """
         return self.request.user
+
+
+@extend_schema(
+    summary="Получить публичный профиль пользователя",
+    description="Позволяет любому пользователю получить данные другого пользователя по его ID.",
+    responses={200: UserSerializer},
+    tags=["Users"],
+)
+class PublicUserProfileView(RetrieveAPIView):
+    """
+    Представление для просмотра профиля пользователя по ID.
+    Доступно всем пользователям.
+    """
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+    permission_classes = (AllowAny,)
 
 
 

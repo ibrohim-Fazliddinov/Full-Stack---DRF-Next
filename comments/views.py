@@ -18,7 +18,7 @@ from comments.serializer import CommentSerializer, TagSerializer, LikeSerializer
     responses={200: CommentSerializer(many=True)},
     tags=['Comments']
 )
-class CommentView(viewsets.ModelViewSet):
+class CommentViewSet(viewsets.ModelViewSet):
     """
     Представление для работы с комментариями.
 
@@ -55,7 +55,7 @@ class CommentView(viewsets.ModelViewSet):
     responses={200: TagSerializer(many=True)},
     tags=['Tags']
 )
-class TagView(viewsets.ModelViewSet):
+class TagViewSet(viewsets.ModelViewSet):
     """
     Представление для работы с тегами.
 
