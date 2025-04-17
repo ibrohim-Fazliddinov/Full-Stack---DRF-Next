@@ -3,11 +3,11 @@
 > Каркас для разработки современных full-stack веб-приложений с использованием Django REST Framework и Next.js.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)  
-![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)
-![Django](https://img.shields.io/badge/Django-latest-brightgreen.svg)
-![DRF](https://img.shields.io/badge/DRF-v3.12-blue.svg)
-![Next.js](https://img.shields.io/badge/Next.js-latest-black.svg)
-![React](https://img.shields.io/badge/React-17%2B-blue.svg)
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+![Django](https://img.shields.io/badge/django-%23092E20.svg?style=for-the-badge&logo=django&logoColor=white)
+![DjangoREST](https://img.shields.io/badge/DJANGO-REST-ff1709?style=for-the-badge&logo=django&logoColor=white&color=ff1709&labelColor=gray)
+![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white)
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
 ![TypeScript](https://img.shields.io/badge/TypeScript-4%2B-blue.svg)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13-blue.svg)
 ![SQLite](https://img.shields.io/badge/SQLite-development-lightgrey.svg)
@@ -17,6 +17,8 @@
 ![OAuth2](https://img.shields.io/badge/OAuth2-social%20login-cyan.svg)
 ![PyTest](https://img.shields.io/badge/PyTest-6.2-blue.svg)
 ![Jest](https://img.shields.io/badge/Jest-27-red.svg)
+![Celery](https://img.shields.io/badge/celery-%23a9cc54.svg?style=for-the-badge&logo=celery&logoColor=ddf4a4)
+![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)
 
 ---
 
