@@ -218,7 +218,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 # region ---------------------- REST FRAMEWORK ----------------------------------------------
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.AllowAny',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         # 'rest_framework.authentication.BasicAuthentication',
@@ -243,20 +243,20 @@ REST_USE_JWT = True
 
 # region ---------------------- SIMPLE JWT & DJOSER -----------------------------------------
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
     "ROTATE_REFRESH_TOKENS": True,  # Обновление refresh-токена при каждом запросе
     "BLACKLIST_AFTER_ROTATION": True,  # Аннулирование старого refresh-токена
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
-DJOSER = {
-    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
-    'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
-    'ACTIVATION_URL': '#/activate/{uid}/{token}',
-    'SEND_ACTIVATION_EMAIL': False,
-    'SERIALIZERS': {},
-}
+# DJOSER = {
+#     'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
+#     'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
+#     'ACTIVATION_URL': '#/activate/{uid}/{token}',
+#     'SEND_ACTIVATION_EMAIL': False,
+#     'SERIALIZERS': {},
+# }
 # endregion -------------------------------------------------------------------------
 
 
@@ -286,3 +286,21 @@ TOKEN_LENGTH = 6
 
 # Token expiry
 TOKEN_EXPIRE_MINUTES = 3
+
+LOGIN_REDIRECT_URL = '/'  # или другой URL, куда ты хочешь перенаправлять юзера
+ACCOUNT_LOGOUT_REDIRECT_URL = '/'
+
+# SOCIALACCOUNT_PROVIDERS = {
+#     "github": {
+#         "APP": {
+#             "client_id": "Ov23liNdyaBrIswTFd9E",
+#             "secret": "d9eaae588335bb538dc9fe197cf3b84111013ae6",
+#         }
+#     },
+#     "google": {
+#         "APP": {
+#             "client_id": "1016998513874-onlo6a9k0k4ketp2t19ob18dpf3l810h.apps.googleusercontent.com",
+#             "secret": "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"
+#         }
+#     }
+# }

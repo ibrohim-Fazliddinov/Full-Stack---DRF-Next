@@ -1,4 +1,4 @@
-from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
@@ -53,6 +53,7 @@ class Comment(models.Model):
         blank=True,
         null=True
     )
+    likes = GenericRelation('Like')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -64,7 +65,6 @@ class Like(models.Model):
     author = models.ForeignKey(
         to='users.User',
         on_delete=models.CASCADE,
-        related_name='reactions'
     )
     content_type = models.ForeignKey(
         to=ContentType,

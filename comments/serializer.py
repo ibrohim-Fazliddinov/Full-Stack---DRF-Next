@@ -38,7 +38,8 @@ class CommentSerializer(serializers.ModelSerializer):
         return CommentSerializer(replies, many=True).data
 
 class LikeSerializer(serializers.ModelSerializer):
-    author = ProfileSerializerShort(source='user')
+    content_type = serializers.SlugRelatedField(queryset=ContentType.objects.all(), slug_field="model", required=True)
+    author = ProfileSerializerShort(source='user', read_only=True)
     class Meta:
         model = Like
         fields = (
@@ -47,8 +48,15 @@ class LikeSerializer(serializers.ModelSerializer):
             'object_id',
             'created_at'
         )
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        content_type = ContentType.objects.get_for_id(instance.content_type_id)
-        representation['content_type'] = content_type.model
-        return representation
+
+    def validate(self, data):
+        """Проверяет, существует ли объект, который хотят лайкнуть."""
+        model_class = data["content_type"].model_class()
+        if not model_class.objects.filter(id=data["object_id"]).exists():
+            raise serializers.ValidationError({"object_id": "Object does not exist."})
+        return data
+    # def to_representation(self, instance):
+    #     representation = super().to_representation(instance)
+    #     content_type = ContentType.objects.get_for_id(instance.content_type_id)
+    #     representation['content_type'] = content_type.model
+    #     return representation

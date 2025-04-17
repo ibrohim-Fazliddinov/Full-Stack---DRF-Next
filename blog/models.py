@@ -1,9 +1,8 @@
-import datetime
 from random import randint
 from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.utils.text import slugify
-from rest_framework.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 User = get_user_model()
@@ -42,6 +41,8 @@ class Post(models.Model):
         to='comments.Tag',
         blank=True
     )
+    likes = GenericRelation('comments.Like')
+
     preview = models.ImageField(blank=True, null=True, upload_to='post/preview/')
     slug = models.SlugField(unique=True, max_length=100)
     status = models.CharField(
@@ -75,6 +76,8 @@ class Post(models.Model):
         duration = max(1, word_count // words_per_minute)
         return duration
 
+    def get_likes_count(self):
+        return self.likes.count()
 
 
     def save(self, *args, **kwargs):

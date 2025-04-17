@@ -1,5 +1,8 @@
+from django.conf.urls.static import static
 from django.urls import path, re_path
 from django.views.generic import TemplateView
+
+from config import settings
 from users.views.user import (
     UserRegistrationView,
     CustomPasswordChangeView,
@@ -9,7 +12,7 @@ from users.views.user import (
     UserLoginView,
     GoogleLogin,
     GitHubLogin,
-    UserAPIView,
+    UserView,
     CustomResendEmailVerificationView,
     CustomVerifyEmailView,
     PublicUserProfileView
@@ -25,7 +28,7 @@ urlpatterns = [
     path('auth/change-password', CustomPasswordChangeView.as_view(), name='change_password'),
 
     path('auth/reset-password/', CustomPasswordResetView.as_view(), name='password_reset'),
-    path('auth/confirm-reset-password/<uidb64>/<token>/', CustomPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('auth/confirm-reset-password/<str:uuidb64>/<str:token>/', CustomPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path("auth/resend-email/", CustomResendEmailVerificationView.as_view(), name="resend_email"),
     re_path(
         r"^account-confirm-email/(?P<key>[-:\w]+)/$",
@@ -37,9 +40,8 @@ urlpatterns = [
         TemplateView.as_view(),
         name="account_email_verification_sent",
     ),
-    path('auth/user/', UserAPIView.as_view(), name='users'),
+    path('auth/user/', UserView.as_view(), name='users'),
     path('auth/user/<int:pk>', PublicUserProfileView.as_view(), name='public-user-profile')
 
 ]
-
 

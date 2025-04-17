@@ -3,19 +3,19 @@ from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.linkedin_oauth2.views import LinkedInOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from allauth.socialaccount.providers.twitter.views import TwitterOAuthAdapter
+from dj_rest_auth.registration.serializers import SocialLoginSerializer, ResendEmailVerificationSerializer, \
+    VerifyEmailSerializer
 from dj_rest_auth.registration.views import RegisterView, SocialLoginView, SocialConnectView, \
     ResendEmailVerificationView, VerifyEmailView
+from dj_rest_auth.serializers import PasswordChangeSerializer, PasswordResetSerializer, PasswordResetConfirmSerializer
 from dj_rest_auth.social_serializers import TwitterConnectSerializer
 from dj_rest_auth.views import LoginView, LogoutView, PasswordChangeView, PasswordResetView, PasswordResetConfirmView
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
-from drf_spectacular.utils import extend_schema_view, extend_schema
-from rest_framework import status
+from drf_spectacular.utils import extend_schema_view, extend_schema, OpenApiParameter
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.renderers import TemplateHTMLRenderer
-from rest_framework.response import Response
-from users.api.serializer import RegistrationSerializer, LoginSerializer, UserSerializer
+from users.api.serializer import RegistrationSerializer, LoginSerializer, UserSerializer, UserUpdateSerializer
 
 User = get_user_model()
 
@@ -24,7 +24,7 @@ User = get_user_model()
         summary='User Registration',
         description='Registers a new user in the system and returns a success message.',
         tags=['Auth'],
-        responses={201: 'User successfully registered'}
+        # responses={201: 'User successfully registered'}
     )
 )
 class UserRegistrationView(RegisterView):
@@ -58,8 +58,9 @@ class UserRegistrationView(RegisterView):
     post=extend_schema(
         summary='User Login',
         description='Authenticates a user using email and password.',
+        request=LoginSerializer,
         tags=['Auth'],
-        responses={200: 'User successfully logged in'}
+        # responses={200: 'User successfully logged in'}
     )
 )
 class UserLoginView(LoginView):
@@ -73,14 +74,14 @@ class UserLoginView(LoginView):
     Timing:
         Typical login process takes around 50-150 ms.
     """
-    serializer_class = LoginSerializer
 
 @extend_schema_view(
     post=extend_schema(
         summary='GitHub Social Login',
         description='Allows users to login via GitHub OAuth2.',
+        request=SocialLoginSerializer,
         tags=['Social Auth'],
-        responses={200: 'User successfully logged in via GitHub'}
+        # responses={200: 'User successfully logged in via GitHub'}
     )
 )
 class GitHubLogin(SocialLoginView):
@@ -102,8 +103,9 @@ class GitHubLogin(SocialLoginView):
     post=extend_schema(
         summary='Google Social Login',
         description='Allows users to login via Google OAuth2.',
+        request=SocialLoginSerializer,
         tags=['Social Auth'],
-        responses={200: 'User successfully logged in via Google'}
+        # responses={200: 'User successfully logged in via Google'}
     )
 )
 class GoogleLogin(SocialLoginView):
@@ -126,7 +128,7 @@ class GoogleLogin(SocialLoginView):
         summary='Twitter Social Connect',
         description='Connects a user account with Twitter via OAuth.',
         tags=['Social Auth'],
-        responses={200: 'User successfully connected to Twitter'}
+        # responses={200: 'User successfully connected to Twitter'}
     )
 )
 class TwitterConnect(SocialConnectView):
@@ -148,7 +150,7 @@ class TwitterConnect(SocialConnectView):
         summary='LinkedIn Social Connect',
         description='Connects a user account with LinkedIn via OAuth.',
         tags=['Social Auth'],
-        responses={200: 'User successfully connected to LinkedIn'}
+        # responses={200: 'User successfully connected to LinkedIn'}
     )
 )
 class LinkedinConnect(SocialConnectView):
@@ -168,8 +170,9 @@ class LinkedinConnect(SocialConnectView):
     post=extend_schema(
         summary='User Logout',
         description='Logs out the authenticated user.',
+        request=None,
         tags=['Auth'],
-        responses={200: 'User successfully logged out'}
+        # responses={200: 'User successfully logged out'}
     )
 )
 class CustomLogoutView(LogoutView):
@@ -188,8 +191,9 @@ class CustomLogoutView(LogoutView):
     post=extend_schema(
         summary='Password Change',
         description='Allows users to change their password.',
+        request=PasswordChangeSerializer,
         tags=['Auth'],
-        responses={200: 'Password changed successfully'}
+        # responses={200: 'Password changed successfully'}
     )
 )
 class CustomPasswordChangeView(PasswordChangeView):
@@ -208,8 +212,9 @@ class CustomPasswordChangeView(PasswordChangeView):
     post=extend_schema(
         summary='Password Reset',
         description="Sends a password reset link to the user's email.",
+        request=PasswordResetSerializer,
         tags=['Auth'],
-        responses={200: 'Password reset link sent successfully'}
+        # responses={200: 'Password reset link sent successfully'}
     )
 )
 class CustomPasswordResetView(PasswordResetView):
@@ -228,8 +233,9 @@ class CustomPasswordResetView(PasswordResetView):
     post=extend_schema(
         summary='Password Reset Confirmation',
         description='Confirms the password reset process and sets a new password.',
+        request=PasswordResetConfirmSerializer,
         tags=['Auth'],
-        responses={200: 'Password reset confirmed successfully'}
+        # responses={200: 'Password reset confirmed successfully'}
     )
 )
 class CustomPasswordResetConfirmView(PasswordResetConfirmView):
@@ -244,35 +250,13 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
     pass
 
 
-@extend_schema_view(
-    retrieve=extend_schema(
-        summary="Получить информацию о текущем пользователе",
-        description="Возвращает информацию о пользователе, который отправил запрос.",
-        responses={200: UserSerializer},
-        tags=["Users"],
-    ),
-    update=extend_schema(
-        summary="Полностью обновить профиль пользователя",
-        description="Полностью заменяет данные пользователя на переданные.",
-        request=UserSerializer,
-        responses={200: UserSerializer},
-        tags=["Users"],
-    ),
-    partial_update=extend_schema(
-        summary="Частично обновить профиль пользователя",
-        description="Обновляет только указанные поля пользователя.",
-        request=UserSerializer,
-        responses={200: UserSerializer},
-        tags=["Users"],
-    ),
-    destroy=extend_schema(
-        summary="Удалить профиль пользователя",
-        description="Удаляет профиль текущего пользователя. После удаления вход невозможен.",
-        responses={204: None},
-        tags=["Users"],
-    ),
+@extend_schema(
+    summary="Получить информацию о текущем пользователе",
+    description="Возвращает информацию о пользователе, который отправил запрос.",
+    responses={200: UserSerializer},
+    tags=['Users']
 )
-class UserAPIView(RetrieveUpdateDestroyAPIView):
+class UserView(RetrieveUpdateDestroyAPIView):
     """
     Представление для работы с профилем текущего пользователя.
 
@@ -282,7 +266,8 @@ class UserAPIView(RetrieveUpdateDestroyAPIView):
     - PATCH: Частично обновить данные пользователя.
     - DELETE: Удалить профиль пользователя.
     """
-    queryset = User.objects.all()
+
+    # queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticated,)
 
@@ -292,18 +277,20 @@ class UserAPIView(RetrieveUpdateDestroyAPIView):
         """
         return self.request.user
 
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return UserSerializer
+        elif self.request.method in ["PUT", "PATCH"]:
+            return UserUpdateSerializer
+        return super().get_serializer_class()
 
 @extend_schema(
-    summary="Получить публичный профиль пользователя",
-    description="Позволяет любому пользователю получить данные другого пользователя по его ID.",
+    summary="Получить информацию о текущем пользователе",
+    description="Возвращает информацию о пользователе, который отправил запрос.",
     responses={200: UserSerializer},
-    tags=["Users"],
+    tags=['Users']
 )
 class PublicUserProfileView(RetrieveAPIView):
-    """
-    Представление для просмотра профиля пользователя по ID.
-    Доступно всем пользователям.
-    """
     serializer_class = UserSerializer
     queryset = User.objects.all()
     permission_classes = (AllowAny,)
@@ -313,7 +300,8 @@ class PublicUserProfileView(RetrieveAPIView):
 @extend_schema(
     summary="Повторная отправка письма с подтверждением",
     description="Эндпоинт для повторной отправки письма с подтверждением на email пользователя.",
-    responses={200: "Email verification resent successfully", 400: "Invalid request data"},
+    request=ResendEmailVerificationSerializer,
+    # responses={200: "Email verification resent successfully", 400: "Invalid request data"},
     tags=["Auth"],
 )
 class CustomResendEmailVerificationView(ResendEmailVerificationView):
@@ -328,7 +316,8 @@ class CustomResendEmailVerificationView(ResendEmailVerificationView):
 @extend_schema(
     summary="Подтверждение email",
     description="Эндпоинт для подтверждения email пользователя по ссылке из письма.",
-    responses={200: "Email verified successfully", 400: "Invalid or expired verification link"},
+    request=VerifyEmailSerializer,
+    # responses={200: "Email verified successfully", 400: "Invalid or expired verification link"},
     tags=["Auth"],
 )
 class CustomVerifyEmailView(VerifyEmailView):

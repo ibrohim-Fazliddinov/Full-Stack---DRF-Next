@@ -10,8 +10,7 @@ router.register(r'tags', TagViewSet, basename="tags")
 
 
 urlpatterns = [
-    path('posts/<int:pk>/like/', LikeView.as_view(), name='post-like'),  # Лайк поста
-    path('comments/<int:pk>/like/', LikeView.as_view(), name='comment-like'),  # Лайк комментария
+    path('like/', LikeView.as_view(), name='like'),  # Лайк поста
     path('', include(router.urls)),
 
 ]

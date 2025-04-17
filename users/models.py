@@ -56,8 +56,8 @@ class Profile(models.Model):
         blank=True,
         null=True
     )
-    bio = CKEditor5Field()
-    skills = models.JSONField(default=list, blank=True, verbose_name="Навыки")
+    bio = CKEditor5Field(blank=True, null=True)
+    skills = models.CharField(max_length=255, blank=True, verbose_name="Навыки")
     date_of_birth = models.DateField(blank=True, null=True)
     followers = models.ManyToManyField(settings.AUTH_USER_MODEL,
                                        related_name="user_followers",

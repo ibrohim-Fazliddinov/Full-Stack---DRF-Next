@@ -105,34 +105,22 @@ class LikeView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = LikeSerializer
 
-    def post(self, request, content_type, object_id):
-        try:
-            # Получаем модель по типу контента (например, Post или Comment)
-            model = ContentType.objects.get(model=content_type).model_class()
-        except ContentType.DoesNotExist:
-            return Response({"detail": "Неверный тип контента."}, status=400)
+    def post(self, request, *args, **kwargs):
 
-        obj = get_object_or_404(model, pk=object_id)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid()
 
-        # Проверяем наличие лайка
+        content_type = serializer.validated_data['content_type']
+        object_id = serializer.validated_data['object_id']
+
+        user = request.user
+
         like, created = Like.objects.get_or_create(
-            user=request.user,
-            content_type=ContentType.objects.get_for_model(obj),
-            object_id=obj.id
+            author=user, content_type=content_type, object_id=object_id
         )
 
         if not created:
-            # Если лайк уже существует, удаляем его (дизлайк)
             like.delete()
-            liked = False
-        else:
-            liked = True
+            return Response({"message": "Like removed"}, status=status.HTTP_204_NO_CONTENT)
 
-        data = {
-            'liked': liked,
-            'total_likes': Like.objects.filter(
-                content_type=ContentType.objects.get_for_model(obj),
-                object_id=obj.id
-            ).count()
-        }
-        return Response(data)
+        return Response({"message": "Like added"}, status=status.HTTP_201_CREATED)

@@ -98,7 +98,10 @@ class UserSerializer(serializers.ModelSerializer):
         )
 
 class UserUpdateSerializer(serializers.ModelSerializer):
-    profile = ProfileSerializer()
+    profile = ProfileUpdateSerializer()
+    role = serializers.CharField(read_only=True)
+    date_joined = serializers.DateTimeField(read_only=True)
+    last_activity = serializers.DateTimeField(read_only=True)
     class Meta:
         model = User
         fields = (
