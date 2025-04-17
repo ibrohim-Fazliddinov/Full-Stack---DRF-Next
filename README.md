@@ -54,7 +54,7 @@
 | Слой           | Технология                         |
 | -------------- | ---------------------------------- |
 | **Бэкенд**     | Python, Django REST Framework      |
-| **Фронтенд (In developing)**   | Next.js, React, TypeScript         |
+| **Фронтенд (In developing & VIBE CODING)**   | Next.js, React, TypeScript         |
 | **База данных**| PostgreSQL (SQLite для разработки) |
 | **Auth**       | JWT, Social OAuth                  |
 | **DevOps**     | Docker, Docker Compose             |
